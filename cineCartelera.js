@@ -1,7 +1,7 @@
-const axios = require('axios')
-const cheerio = require('cheerio')
+const axios = require('axios');
+const cheerio = require('cheerio');
 const iconv = require('iconv-lite');
-require('dotenv').config()
+require('dotenv').config();
 //const fs = require('fs')
 
 
@@ -15,7 +15,7 @@ async function cinesInfo(pagina, dia) {
         responseEncoding: 'binary'
     });
     //fs.writeFileSync('cartelera.html', iconv.decode(datosWeb.data.toString('binary'), "ISO-8859-1"))
-    const $ = await cheerio.load(iconv.decode(datosWeb.data.toString('binary'), "ISO-8859-1"))
+    const $ = await cheerio.load(iconv.decode(datosWeb.data.toString('binary'), "ISO-8859-1"));
     $('div.tableShowings').find('div.tableShowings').each((i, el) => {
         $(el).find('div.movieTitle').each((i, el) => {
             j++
@@ -29,9 +29,9 @@ async function cinesInfo(pagina, dia) {
         })
     });
     //console.log(listaTitulos)
-    return (listaTitulos)
-}
+    return (listaTitulos);
+};
 
 
 
-cinesInfo(process.env.CINEC_HOY, 'HOY')
+cinesInfo(process.env.CINEC_HOY, 'HOY');

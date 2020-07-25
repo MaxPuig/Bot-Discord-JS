@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
@@ -16,11 +16,11 @@ client.on('message', async function (msg) {
     };
     if (msg.author.id == process.env.BOT_RYTHM || msg.author.id == process.env.BOT_GROOVY) {
         setTimeout(() => {
-            msg.delete()
+            msg.delete();
             if (msg.content.toLowerCase().startsWith('👍')) {
                 msg.channel.send('Mansaje borrado. Ya basta de enviar tantos mensajes, Rythm bot <:haha:729754052925325384>').then(msg => {
                     setTimeout(() => {
-                        msg.delete()
+                        msg.delete();
                     }, 5000);
                 })
             }

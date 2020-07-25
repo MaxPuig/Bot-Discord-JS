@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const Discord = require('discord.js');
 const client = new Discord.Client();
 //const fs = require('fs')
@@ -35,12 +35,12 @@ function guardarInfo() {
                 // /////hacía esto ////// console.log(Object.keys(tiempojuegos).length)
                 //tiempojuegos.forEach(lista => {console.log(lista)});
             }
-            tiempojuegos[n.user.id] = { nameGame: 45 }
+            tiempojuegos[n.user.id] = { nameGame: 45 };
             // n = id ; n.user.username ;  n.user.presence.activities[0] = juego
         }
     })
     //////// console.log(nombreID, tiempojuegos)
-}
+};
 
 
 
