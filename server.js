@@ -25,18 +25,21 @@ client.on('message', async function (msg) {
 });
 
 client.on('messageReactionAdd', async (reaction, user) => {
-    reaction.message.channel.send('mensaje de prueba')
+    //console.log(user)
+    if (user.bot == false) {
+        reaction.message.channel.send('Reacción recibida')
+    }
 });
 
 function prueba(msg_channel) {
     msg_channel.send('funciona')
         .then(function (men) {
-            let letters = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🇯', '🔄'];
+            let letters = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🔄'];
             for (let i = 0; i < 10; i++) {
                 men.react(letters[i])
             }
         })
-}
+};
 
 async function infoCineIndex(param) {
     if (param.split(' ').length == 1) {

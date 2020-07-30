@@ -10,8 +10,9 @@ let letras = [':regional_indicator_a:',
     ':regional_indicator_i:',
     ':regional_indicator_j:',
     ':arrows_counterclockwise:'];
-let letrasEmoji = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🇯', '🔄']
+let letrasEmoji = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🔄']
 
+let tableroInicio = [['◻️', '◻️', '◻️'], ['◻️', '◻️', '◻️'], ['◻️', '◻️', '◻️']];
 /*
 
 1) Saber qué 2 jugadores
@@ -22,57 +23,64 @@ let letrasEmoji = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭
 6) comprobar si hay un ganador
 7) Eliminar partida
 
+1) recibe .ttt
+2) devolver mensaje: el que envió .ttt es la ❌. Reacciona j2 con ⭕
+3) cuando recibe la respuesta: elimina el mensaje anterior
+4) envia el tablero en blanco y añade los 10 emotes (9 letras + reset)
+5) espera a una reacción. la procesa (comprueba si es jugada válida y si hay ganador) y edita 
+   el mensaje con el nuevo tablero
+6) cuando hay ganador, borra el mensaje del tablero y envía otro diciendo quién ha sido el ganador
+
 */
 
 function checkWinner(tablero) {
-    //Comprobar :x:
-    if (tablero[0] == [':x:', ':x:', ':x:'] || tablero[1] == [':x:', ':x:', ':x:'] || tablero[2] == [':x:', ':x:', ':x:']) {
-        return true, 'ganador X'
+    //Comprobar ❌
+    if (tablero[0] == ['❌', '❌', '❌'] || tablero[1] == ['❌', '❌', '❌'] || tablero[2] == ['❌', '❌', '❌']) {
+        return true, 'ganador ❌'
     }
-    if (tablero[0][0] == ':x:' && tablero[1][0] == ':x:' && tablero[2][0] == ':x:') {
-        return true, 'ganador X'
+    if (tablero[0][0] == '❌' && tablero[1][0] == '❌' && tablero[2][0] == '❌') {
+        return true, 'ganador ❌'
     }
-    if (tablero[0][1] == ':x:' && tablero[1][1] == ':x:' && tablero[2][1] == ':x:') {
-        return true, 'ganador X'
+    if (tablero[0][1] == '❌' && tablero[1][1] == '❌' && tablero[2][1] == '❌') {
+        return true, 'ganador ❌'
     }
-    if (tablero[0][2] == ':x:' && tablero[1][2] == ':x:' && tablero[2][2] == ':x:') {
-        return true, 'ganador X'
+    if (tablero[0][2] == '❌' && tablero[1][2] == '❌' && tablero[2][2] == '❌') {
+        return true, 'ganador ❌'
     }
-    if (tablero[0][0] == ':x:' && tablero[1][1] == ':x:' && tablero[2][2] == ':x:') {
-        return true, 'ganador X'
+    if (tablero[0][0] == '❌' && tablero[1][1] == '❌' && tablero[2][2] == '❌') {
+        return true, 'ganador ❌'
     }
-    if (tablero[0][2] == ':x:' && tablero[1][1] == ':x:' && tablero[2][0] == ':x:') {
-        return true, 'ganador X'
+    if (tablero[0][2] == '❌' && tablero[1][1] == '❌' && tablero[2][0] == '❌') {
+        return true, 'ganador ❌'
     }
-    //Comprobar :o:
-    if (tablero[0] == [':o:', ':o:', ':o:'] || tablero[1] == [':o:', ':o:', ':o:'] || tablero[2] == [':o:', ':o:', ':o:']) {
-        return true, 'ganador O'
+    //Comprobar ⭕
+    if (tablero[0] == ['⭕', '⭕', '⭕'] || tablero[1] == ['⭕', '⭕', '⭕'] || tablero[2] == ['⭕', '⭕', '⭕']) {
+        return true, 'ganador ⭕'
     }
-    if (tablero[0][0] == ':o:' && tablero[1][0] == ':o:' && tablero[2][0] == ':o:') {
-        return true, 'ganador O'
+    if (tablero[0][0] == '⭕' && tablero[1][0] == '⭕' && tablero[2][0] == '⭕') {
+        return true, 'ganador ⭕'
     }
-    if (tablero[0][1] == ':o:' && tablero[1][1] == ':o:' && tablero[2][1] == ':o:') {
-        return true, 'ganador O'
+    if (tablero[0][1] == '⭕' && tablero[1][1] == '⭕' && tablero[2][1] == '⭕') {
+        return true, 'ganador ⭕'
     }
-    if (tablero[0][2] == ':o:' && tablero[1][2] == ':o:' && tablero[2][2] == ':o:') {
-        return true, 'ganador O'
+    if (tablero[0][2] == '⭕' && tablero[1][2] == '⭕' && tablero[2][2] == '⭕') {
+        return true, 'ganador ⭕'
     }
-    if (tablero[0][0] == ':o:' && tablero[1][1] == ':o:' && tablero[2][2] == ':o:') {
-        return true, 'ganador O'
+    if (tablero[0][0] == '⭕' && tablero[1][1] == '⭕' && tablero[2][2] == '⭕') {
+        return true, 'ganador ⭕'
     }
-    if (tablero[0][2] == ':o:' && tablero[1][1] == ':o:' && tablero[2][0] == ':o:') {
-        return true, 'ganador O'
+    if (tablero[0][2] == '⭕' && tablero[1][1] == '⭕' && tablero[2][0] == '⭕') {
+        return true, 'ganador ⭕'
     }
     //Comprobar si quedan jugadas
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
-            if (tablero[i][j] == ':white_medium_square:') {
+            if (tablero[i][j] == '◻️') {
                 return false, 'siguiente turno'
             }
         }
     }
     //Empate
     return true, 'empate'
-
 };
 
