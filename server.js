@@ -18,9 +18,25 @@ client.on('message', async function (msg) {
     if (msg.content.toLowerCase().startsWith('.cine') && msg.author.bot == false) {
         msg.channel.send(await infoCineIndex(msg.content.toLowerCase())); //.reply
     }
+    if (msg.content == 'aaa') {
+        msg.react('🇦')
+        prueba(msg.channel)
+    }
 });
 
+client.on('messageReactionAdd', async (reaction, user) => {
+    reaction.message.channel.send('mensaje de prueba')
+});
 
+function prueba(msg_channel) {
+    msg_channel.send('funciona')
+        .then(function (men) {
+            let letters = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🇯', '🔄'];
+            for (let i = 0; i < 10; i++) {
+                men.react(letters[i])
+            }
+        })
+}
 
 async function infoCineIndex(param) {
     if (param.split(' ').length == 1) {
