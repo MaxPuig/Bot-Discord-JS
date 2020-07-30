@@ -1,5 +1,5 @@
 
-letras = [':regional_indicator_a:',
+let letras = [':regional_indicator_a:',
     ':regional_indicator_b:',
     ':regional_indicator_c:',
     ':regional_indicator_d:',
@@ -8,7 +8,9 @@ letras = [':regional_indicator_a:',
     ':regional_indicator_g:',
     ':regional_indicator_h:',
     ':regional_indicator_i:',
-    ':regional_indicator_j:'];
+    ':regional_indicator_j:',
+    ':arrows_counterclockwise:'];
+let letrasEmoji = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🇯', '🔄']
 
 /*
 
@@ -62,8 +64,8 @@ function checkWinner(tablero) {
         return true, 'ganador O'
     }
     //Comprobar si quedan jugadas
-    for (let i = 0; i > 3; i++) {
-        for (let j = 0; j > 3; j++) {
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
             if (tablero[i][j] == ':white_medium_square:') {
                 return false, 'siguiente turno'
             }
