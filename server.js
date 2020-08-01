@@ -5,7 +5,11 @@ const iconv = require('iconv-lite');
 require('dotenv').config();
 const Discord = require('discord.js');
 const client = new Discord.Client();
-//const fs = require('fs')
+
+
+let arrayTTT = [];
+const tableroInicio = [['◻', '◻', '◻'], ['◻', '◻', '◻'], ['◻', '◻', '◻']];
+const letters = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🔄'];
 
 
 client.on('ready', function () {
@@ -13,45 +17,103 @@ client.on('ready', function () {
 });
 
 
-
 client.on('message', async function (msg) {
     if (msg.content.toLowerCase().startsWith('.cine') && msg.author.bot == false) {
         msg.channel.send(await infoCineIndex(msg.content.toLowerCase())); //.reply
     }
     if (msg.content == '.ttt') {
-        arrayTTT.push(new juegoTTT(msg.member.displayName, msg.member.id))
-        arrayTTT[0].msgChannelSend = msg.channel;
-        msg.channel.send('**' + msg.member.displayName + '** es la ❌\n**J2**, reacciona al mensaje con ⭕')
+        let userDisplayName = msg.member.displayName;
+        let userID = msg.member.id;
+        if (isUserInArray(userID)) {
+            arrayTTT.splice(posUserInArray(userID), 1)
+        }
+        msg.channel.send('**' + msg.member.displayName + '** es la ❌ y empieza\n**Jugador 2**, reacciona al mensaje con ⭕')
             .then(function (men) {
+                arrayTTT.push(new juegoTTT(userDisplayName, userID, men.channel))
                 men.react('⭕')
             })
     }
 });
 
-let arrayTTT = [];
+
 
 client.on('messageReactionAdd', async (reaction, user) => {
-    if (user.bot == false && reaction.message.content.slice(-1) == '⭕' && reaction._emoji.name == '⭕') {
-        arrayTTT[0].user2(reaction.message.guild.member(user.id).displayName, user.id)
+    if (user.bot == false && reaction.message.content.slice(-1) == '⭕' && reaction._emoji.name == '⭕' && isUserInArray(user.id)) {
+        let pos3 = posUserInArray(user.id);
+        if (arrayTTT[pos3].isActive == true) {
+            arrayTTT.splice(pos3, 1); //lo borra de una partida activa
+        }
+    }
+    if (user.bot == false && reaction.message.content.slice(-1) == '⭕' && reaction._emoji.name == '⭕' && !isUserInArray(user.id)) {
+        let pos = posInArray(reaction.message.channel);
+        arrayTTT[pos].isActive = true;
+        arrayTTT[pos].user2(reaction.message.guild.member(user.id).displayName, user.id)
         reaction.message.delete()
             .then(reaction.message.channel.send(tableroConLetras(tableroInicio))
                 .then((msg) => {
-                    arrayTTT[0].setMsgChannelEdit(msg);
+                    arrayTTT[pos].setMsgChannelEdit(msg);
                     addEmojis(msg)
                 }))
     }
-    if (user.bot == false && letters.indexOf(reaction._emoji.name) >= 0) {
-        if (arrayTTT[0].turno == user.id) {
-            arrayTTT[0].msgChannelEdit.edit(guardarTablero(cambiarTablero(reaction._emoji.name, arrayTTT[0].turnoEmoji, tableroConLetras(arrayTTT[0].tablero))));
-            if(checkWinner(arrayTTT[0].tablero)){
-                arrayTTT[0].msgChannelSend.send(checkWinner(arrayTTT[0].tablero))
-                arrayTTT = []
+    if (user.bot == false && letters.indexOf(reaction._emoji.name) >= 0 && isMsgInArray(reaction.message, user.id)) {
+        let pos2 = posInArray(reaction.message);
+        if (arrayTTT[pos2].turno == user.id) {
+            let mensajechannel = arrayTTT[pos2].msgChannelEdit;
+            mensajechannel.edit(cambiarTablero(reaction._emoji.name, arrayTTT[pos2].turnoEmoji, tableroConLetras(arrayTTT[pos2].tablero), pos2));
+            // edita el mensaje con tablero o reinicio. guarda reinicio o guarda tablero [[],[],[]];
+            if (typeof arrayTTT[pos2].tablero == 'string') { // si pone 'reinicio'
+                arrayTTT.splice(pos2, 1)
+            } else {  // si hay tablero array
+                if (checkWinner(arrayTTT[pos2].tablero)) {
+                    arrayTTT[pos2].msgChannelSend.send(checkWinner(arrayTTT[pos2].tablero))
+                    arrayTTT.splice(pos2, 1) // si hay ganador o empate
+                }
             }
         }
     }
 });
 
-const tableroInicio = [['◻', '◻', '◻'], ['◻', '◻', '◻'], ['◻', '◻', '◻']];
+
+
+function isMsgInArray(checkMsg, checkUserID) {
+    for (let p = 0; p < arrayTTT.length; p++) {
+        let instancia = arrayTTT[p];
+        if (instancia.msgChannelEdit == checkMsg && (instancia.usuario1ID == checkUserID || instancia.usuario2ID == checkUserID)) {
+            return true
+        }
+    }
+    return false
+}
+
+function isUserInArray(checkInfo) {
+    for (let p = 0; p < arrayTTT.length; p++) {
+        let instancia = arrayTTT[p];
+        if (instancia.usuario1ID == checkInfo || instancia.usuario2ID == checkInfo) {
+            return true
+        }
+    }
+    return false
+}
+
+function posUserInArray(userID) {
+    for (let p = 0; p < arrayTTT.length; p++) {
+        let instancia = arrayTTT[p];
+        if (instancia.usuario1ID == userID || instancia.usuario2ID == userID) {
+            return p
+        }
+    }
+    return
+}
+
+function posInArray(msgEditOrSend) {
+    for (let p = 0; p < arrayTTT.length; p++) {
+        let instancia = arrayTTT[p];
+        if (instancia.msgChannelEdit == msgEditOrSend || instancia.msgChannelSend == msgEditOrSend) {
+            return p
+        }
+    }
+    return
+}
 
 function tableroConLetras(tablero) { // [[emojis],[emojis],[emojis]]
     let letrasABC = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'];
@@ -78,84 +140,104 @@ function tableroStrToArray(message_content) {
         message_content = message_content.substring(1)
         message_content = message_content.substring(1)
     }
-    //console.log(tableroString)
     for (let j = 0; j < 3; j++) {
         for (let k = 0; k < 3; k++) {
             tableroArray[j][k] = tableroString.charAt(0)
             tableroString = tableroString.substring(1)
         }
     }
-    //console.log(tableroArray)
     return tableroArray
 };
 
-function cambiarTablero(emoji, turnoEmoji, message_tablero) {
+function guardarTablero(tableroSTR, pos2) {
+    arrayTTT[pos2].tablero = tableroStrToArray(tableroSTR);
+};
+
+function addEmojis(msg_channel) {
+    for (let i = 0; i < 10; i++) {
+        msg_channel.react(letters[i])
+    }
+};
+
+
+
+function cambiarTablero(emoji, turnoEmoji, message_tablero, pos2) {
     let tableroParaCambiar = tableroStrToArray(message_tablero);
     if (turnoEmoji == '❌') {
         if (emoji == '🇦') {
             if (tableroParaCambiar[0][0] == '◻') {
                 tableroParaCambiar[0][0] = '❌'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇧') {
             if (tableroParaCambiar[0][1] == '◻') {
                 tableroParaCambiar[0][1] = '❌'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇨') {
             if (tableroParaCambiar[0][2] == '◻') {
                 tableroParaCambiar[0][2] = '❌'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇩') {
             if (tableroParaCambiar[1][0] == '◻') {
                 tableroParaCambiar[1][0] = '❌'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇪') {
             if (tableroParaCambiar[1][1] == '◻') {
                 tableroParaCambiar[1][1] = '❌'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇫') {
             if (tableroParaCambiar[1][2] == '◻') {
                 tableroParaCambiar[1][2] = '❌'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇬') {
             if (tableroParaCambiar[2][0] == '◻') {
                 tableroParaCambiar[2][0] = '❌'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇭') {
             if (tableroParaCambiar[2][1] == '◻') {
                 tableroParaCambiar[2][1] = '❌'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇮') {
             if (tableroParaCambiar[2][2] == '◻') {
                 tableroParaCambiar[2][2] = '❌'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🔄') {
+            arrayTTT[pos2].tablero = 'Jugador ❌ ha reiniciado';
             return 'Jugador ❌ ha reiniciado'
         }
     }
@@ -163,128 +245,121 @@ function cambiarTablero(emoji, turnoEmoji, message_tablero) {
         if (emoji == '🇦') {
             if (tableroParaCambiar[0][0] == '◻') {
                 tableroParaCambiar[0][0] = '⭕'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇧') {
             if (tableroParaCambiar[0][1] == '◻') {
                 tableroParaCambiar[0][1] = '⭕'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇨') {
             if (tableroParaCambiar[0][2] == '◻') {
                 tableroParaCambiar[0][2] = '⭕'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇩') {
             if (tableroParaCambiar[1][0] == '◻') {
                 tableroParaCambiar[1][0] = '⭕'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇪') {
             if (tableroParaCambiar[1][1] == '◻') {
                 tableroParaCambiar[1][1] = '⭕'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇫') {
             if (tableroParaCambiar[1][2] == '◻') {
                 tableroParaCambiar[1][2] = '⭕'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇬') {
             if (tableroParaCambiar[2][0] == '◻') {
                 tableroParaCambiar[2][0] = '⭕'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇭') {
             if (tableroParaCambiar[2][1] == '◻') {
                 tableroParaCambiar[2][1] = '⭕'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇮') {
             if (tableroParaCambiar[2][2] == '◻') {
                 tableroParaCambiar[2][2] = '⭕'
-                arrayTTT[0].cambioTurno()
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🔄') {
+            arrayTTT[pos2].tablero = 'Jugador ⭕ ha reiniciado';
             return 'Jugador ⭕ ha reiniciado'
         }
     }
-    return
 };
 
-function guardarTablero(tableroSTR) {
-    arrayTTT[0].tablero = tableroStrToArray(tableroSTR);
-    return tableroSTR
-}
 
 
-function checkWinner(tablero) {
+function checkWinner(tablero, posicion) {
     //Comprobar ❌
     if (JSON.stringify(tablero[0]) == JSON.stringify(['❌', '❌', '❌']) || JSON.stringify(tablero[1]) == JSON.stringify(['❌', '❌', '❌']) || JSON.stringify(tablero[2]) == JSON.stringify(['❌', '❌', '❌'])) {
-        arrayTTT.splice()
         return 'ganador ❌'
     }
     if (tablero[0][0] == '❌' && tablero[1][0] == '❌' && tablero[2][0] == '❌') {
-        arrayTTT.splice()
         return 'ganador ❌'
     }
     if (tablero[0][1] == '❌' && tablero[1][1] == '❌' && tablero[2][1] == '❌') {
-        arrayTTT.splice()
         return 'ganador ❌'
     }
     if (tablero[0][2] == '❌' && tablero[1][2] == '❌' && tablero[2][2] == '❌') {
-        arrayTTT.splice()
         return 'ganador ❌'
     }
     if (tablero[0][0] == '❌' && tablero[1][1] == '❌' && tablero[2][2] == '❌') {
-        arrayTTT.splice()
         return 'ganador ❌'
     }
     if (tablero[0][2] == '❌' && tablero[1][1] == '❌' && tablero[2][0] == '❌') {
-        arrayTTT.splice()
         return 'ganador ❌'
     }
     //Comprobar ⭕
     if (JSON.stringify(tablero[0]) == JSON.stringify(['⭕', '⭕', '⭕']) || JSON.stringify(tablero[1]) == JSON.stringify(['⭕', '⭕', '⭕']) || JSON.stringify(tablero[2]) == JSON.stringify(['⭕', '⭕', '⭕'])) {
-        arrayTTT.splice()
         return 'ganador ⭕'
     }
     if (tablero[0][0] == '⭕' && tablero[1][0] == '⭕' && tablero[2][0] == '⭕') {
-        arrayTTT.splice()
         return 'ganador ⭕'
     }
     if (tablero[0][1] == '⭕' && tablero[1][1] == '⭕' && tablero[2][1] == '⭕') {
-        arrayTTT.splice()
         return 'ganador ⭕'
     }
     if (tablero[0][2] == '⭕' && tablero[1][2] == '⭕' && tablero[2][2] == '⭕') {
-        arrayTTT.splice()
         return 'ganador ⭕'
     }
     if (tablero[0][0] == '⭕' && tablero[1][1] == '⭕' && tablero[2][2] == '⭕') {
-        arrayTTT.splice()
         return 'ganador ⭕'
     }
     if (tablero[0][2] == '⭕' && tablero[1][1] == '⭕' && tablero[2][0] == '⭕') {
-        arrayTTT.splice()
         return 'ganador ⭕'
     }
     //Comprobar si quedan jugadas
@@ -296,9 +371,10 @@ function checkWinner(tablero) {
         }
     }
     //Empate
-    arrayTTT.splice()
     return 'empate'
 };
+
+
 
 class juegoTTT {
     constructor(usuario1, usuario1ID, msgChannelSend) {
@@ -314,6 +390,7 @@ class juegoTTT {
         this.tablero = [['◻', '◻', '◻'], ['◻', '◻', '◻'], ['◻', '◻', '◻']];
         this.msgChannelSend = msgChannelSend;
         this.msgChannelEdit = '';
+        this.isActive = false;
     }
     user2(usuario2, usuario2ID) {
         this.usuario2 = usuario2;
@@ -333,24 +410,20 @@ class juegoTTT {
     }
 }
 
-const letters = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🔄'];
 
-function addEmojis(msg_channel) {
-    for (let i = 0; i < 10; i++) {
-        msg_channel.react(letters[i])
-    }
-};
+///////// ABAJO CÓDIGO CINE
+
 
 async function infoCineIndex(param) {
     if (param.split(' ').length == 1) {
         let mensaje = await cinesInfo(process.env.CINEC_HOY, 'HOY') + '\n \n' +
-            '| sinopsis peli: `.cine {numero}` | mañana: `.cine m` | pasado: `.cine  pm` |';
+            '| sinopsis peli: `.cine {numero}` | mañana: `.cine m` | pasado: `.cine pm` |';
         return mensaje;
     }
     if (param.split(' ').length == 2) {
         if (param.split(' ')[1] == 'm') {
             let mensaje = await cinesInfo(process.env.CINEC_M, 'MAÑANA') + '\n \n' +
-                '| sinopsis peli: `.cine m {numero}` | cartelera pasado mañana: `.cine  pm` | sinopsis pasado mañana: `.cine pm {numero}` |';
+                '| sinopsis peli: `.cine m {numero}` | cartelera pasado mañana: `.cine pm` | sinopsis pasado mañana: `.cine pm {numero}` |';
             return mensaje;
         }
         if (param.split(' ')[1] == 'pm') {
