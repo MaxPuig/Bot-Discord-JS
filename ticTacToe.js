@@ -3,7 +3,7 @@ let letrasDiscord = [':regional_indicator_a:', ':regional_indicator_b:', ':regio
 
 let letrasEmoji = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🔄']
 
-let tableroInicio = [['◻', '◻', '◻'], ['◻', '◻', '◻'], ['◻', '◻', '◻']];
+const tableroInicio = [['◻', '◻', '◻'], ['◻', '◻', '◻'], ['◻', '◻', '◻']];
 
 
 
@@ -74,17 +74,6 @@ function tableroConLetras(tablero) { // [[emojis],[emojis],[emojis]]
     return tableroParaEnviar
 };
 
-/*
-
-1) recibe .ttt
-2) devolver mensaje: el que envió .ttt es la ❌. Reacciona j2 con ⭕
-3) cuando recibe la respuesta: elimina el mensaje anterior
-4) envia el tablero en blanco y añade los 10 emotes (9 letras + reset)
-5) espera a una reacción. la procesa (comprueba si es jugada válida y si hay ganador) y edita 
-   el mensaje con el nuevo tablero
-6) cuando hay ganador, borra el mensaje del tablero y envía otro diciendo quién ha sido el ganador
-
-*/
 
 function tableroStrToArray(message_content) {
     let tableroArray = [[], [], []];
