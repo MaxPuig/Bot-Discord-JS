@@ -1,61 +1,110 @@
-
-let letrasDiscord = [':regional_indicator_a:', ':regional_indicator_b:', ':regional_indicator_c:', ':regional_indicator_d:', ':regional_indicator_e:', ':regional_indicator_f:', ':regional_indicator_g:', ':regional_indicator_h:', ':regional_indicator_i:', ':regional_indicator_j:', ':arrows_counterclockwise:'];
-
-let letrasEmoji = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🔄']
-
+let arrayTTT = [];
 const tableroInicio = [['◻', '◻', '◻'], ['◻', '◻', '◻'], ['◻', '◻', '◻']];
+const letters = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🔄'];
 
 
 
-function checkWinner(tablero) {
-    //Comprobar ❌
-    if (tablero[0] == ['❌', '❌', '❌'] || tablero[1] == ['❌', '❌', '❌'] || tablero[2] == ['❌', '❌', '❌']) {
-        return true, 'ganador ❌'
+// client.on('message', async function (msg) ...
+function ticTacToe(msg) {
+    if (msg.content == '.ttt') {
+        let userDisplayName = msg.member.displayName;
+        let userID = msg.member.id;
+        if (isUserInArray(userID)) {
+            arrayTTT.splice(posUserInArray(userID), 1);
+        }
+        msg.channel.send('**' + msg.member.displayName + '** es la ❌ y empieza\n**Jugador 2**, reacciona al mensaje con ⭕')
+            .then(function (men) {
+                arrayTTT.push(new juegoTTT(userDisplayName, userID, men.channel));
+                men.react('⭕');
+            })
     }
-    if (tablero[0][0] == '❌' && tablero[1][0] == '❌' && tablero[2][0] == '❌') {
-        return true, 'ganador ❌'
+};
+
+
+
+// client.on('messageReactionAdd', async (reaction, user) ...
+function tttEmojis(reaction, user) {
+    if (user.bot == false && reaction.message.content.slice(-1) == '⭕' && reaction._emoji.name == '⭕' && isUserInArray(user.id)) {
+        let pos3 = posUserInArray(user.id);
+        if (arrayTTT[pos3].isActive == true) {
+            arrayTTT.splice(pos3, 1); //lo borra de una partida activa
+        }
     }
-    if (tablero[0][1] == '❌' && tablero[1][1] == '❌' && tablero[2][1] == '❌') {
-        return true, 'ganador ❌'
+    if (user.bot == false && reaction.message.content.slice(-1) == '⭕' && reaction._emoji.name == '⭕' && !isUserInArray(user.id)) {
+        let pos = posInArray(reaction.message.channel);
+        arrayTTT[pos].isActive = true;
+        arrayTTT[pos].user2(reaction.message.guild.member(user.id).displayName, user.id)
+        reaction.message.delete()
+            .then(reaction.message.channel.send(tableroConLetras(tableroInicio))
+                .then((msg) => {
+                    arrayTTT[pos].setMsgChannelEdit(msg);
+                    addEmojis(msg)
+                }))
     }
-    if (tablero[0][2] == '❌' && tablero[1][2] == '❌' && tablero[2][2] == '❌') {
-        return true, 'ganador ❌'
-    }
-    if (tablero[0][0] == '❌' && tablero[1][1] == '❌' && tablero[2][2] == '❌') {
-        return true, 'ganador ❌'
-    }
-    if (tablero[0][2] == '❌' && tablero[1][1] == '❌' && tablero[2][0] == '❌') {
-        return true, 'ganador ❌'
-    }
-    //Comprobar ⭕
-    if (tablero[0] == ['⭕', '⭕', '⭕'] || tablero[1] == ['⭕', '⭕', '⭕'] || tablero[2] == ['⭕', '⭕', '⭕']) {
-        return true, 'ganador ⭕'
-    }
-    if (tablero[0][0] == '⭕' && tablero[1][0] == '⭕' && tablero[2][0] == '⭕') {
-        return true, 'ganador ⭕'
-    }
-    if (tablero[0][1] == '⭕' && tablero[1][1] == '⭕' && tablero[2][1] == '⭕') {
-        return true, 'ganador ⭕'
-    }
-    if (tablero[0][2] == '⭕' && tablero[1][2] == '⭕' && tablero[2][2] == '⭕') {
-        return true, 'ganador ⭕'
-    }
-    if (tablero[0][0] == '⭕' && tablero[1][1] == '⭕' && tablero[2][2] == '⭕') {
-        return true, 'ganador ⭕'
-    }
-    if (tablero[0][2] == '⭕' && tablero[1][1] == '⭕' && tablero[2][0] == '⭕') {
-        return true, 'ganador ⭕'
-    }
-    //Comprobar si quedan jugadas
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-            if (tablero[i][j] == '◻') {
-                return false, 'siguiente turno'
+    if (user.bot == false && letters.indexOf(reaction._emoji.name) >= 0 && isMsgInArray(reaction.message, user.id)) {
+        let pos2 = posInArray(reaction.message);
+        if (arrayTTT[pos2].turno == user.id) {
+            let mensajechannel = arrayTTT[pos2].msgChannelEdit;
+            mensajechannel.edit(cambiarTablero(reaction._emoji.name, arrayTTT[pos2].turnoEmoji, tableroConLetras(arrayTTT[pos2].tablero), pos2));
+            // edita el mensaje con tablero o reinicio. guarda reinicio o guarda tablero [[],[],[]];
+            if (typeof arrayTTT[pos2].tablero == 'string') { // si pone 'reinicio'
+                arrayTTT.splice(pos2, 1)
+            } else {  // si hay tablero array
+                if (checkWinner(arrayTTT[pos2].tablero)) {
+                    arrayTTT[pos2].msgChannelSend.send(checkWinner(arrayTTT[pos2].tablero))
+                    arrayTTT.splice(pos2, 1) // si hay ganador o empate
+                }
             }
         }
     }
-    //Empate
-    return true, 'empate'
+};
+
+
+
+function isMsgInArray(checkMsg, checkUserID) {
+    for (let p = 0; p < arrayTTT.length; p++) {
+        let instancia = arrayTTT[p];
+        if (instancia.msgChannelEdit == checkMsg && (instancia.usuario1ID == checkUserID || instancia.usuario2ID == checkUserID)) {
+            return true
+        }
+    }
+    return false
+};
+
+
+
+function isUserInArray(checkInfo) {
+    for (let p = 0; p < arrayTTT.length; p++) {
+        let instancia = arrayTTT[p];
+        if (instancia.usuario1ID == checkInfo || instancia.usuario2ID == checkInfo) {
+            return true
+        }
+    }
+    return false
+};
+
+
+
+function posUserInArray(userID) {
+    for (let p = 0; p < arrayTTT.length; p++) {
+        let instancia = arrayTTT[p];
+        if (instancia.usuario1ID == userID || instancia.usuario2ID == userID) {
+            return p
+        }
+    }
+    return
+};
+
+
+
+function posInArray(msgEditOrSend) {
+    for (let p = 0; p < arrayTTT.length; p++) {
+        let instancia = arrayTTT[p];
+        if (instancia.msgChannelEdit == msgEditOrSend || instancia.msgChannelSend == msgEditOrSend) {
+            return p
+        }
+    }
+    return
 };
 
 
@@ -75,6 +124,7 @@ function tableroConLetras(tablero) { // [[emojis],[emojis],[emojis]]
 };
 
 
+
 function tableroStrToArray(message_content) {
     let tableroArray = [[], [], []];
     let tableroString = '';
@@ -86,185 +136,280 @@ function tableroStrToArray(message_content) {
         message_content = message_content.substring(1)
         message_content = message_content.substring(1)
     }
-    console.log(tableroString)
     for (let j = 0; j < 3; j++) {
         for (let k = 0; k < 3; k++) {
             tableroArray[j][k] = tableroString.charAt(0)
             tableroString = tableroString.substring(1)
         }
     }
-    console.log(tableroArray)
     return tableroArray
 };
 
-//checkWinner(tableroStrToArray('◻a◻b◻c\n◻d◻e◻f\n◻g◻h◻i'))
+
+
+function guardarTablero(tableroSTR, pos2) {
+    arrayTTT[pos2].tablero = tableroStrToArray(tableroSTR);
+};
 
 
 
-function cambiarTablero(emoji, XorO, message_tablero) {
-    let tableroParaCambiar = tableroStrToArray(message_tablero)
-    if (XorO == '❌') {
+function addEmojis(msg_channel) {
+    for (let i = 0; i < 10; i++) {
+        msg_channel.react(letters[i])
+    }
+};
+
+
+
+function cambiarTablero(emoji, turnoEmoji, message_tablero, pos2) {
+    let tableroParaCambiar = tableroStrToArray(message_tablero);
+    if (turnoEmoji == '❌') {
         if (emoji == '🇦') {
             if (tableroParaCambiar[0][0] == '◻') {
                 tableroParaCambiar[0][0] = '❌'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇧') {
             if (tableroParaCambiar[0][1] == '◻') {
                 tableroParaCambiar[0][1] = '❌'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇨') {
             if (tableroParaCambiar[0][2] == '◻') {
                 tableroParaCambiar[0][2] = '❌'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇩') {
             if (tableroParaCambiar[1][0] == '◻') {
                 tableroParaCambiar[1][0] = '❌'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇪') {
             if (tableroParaCambiar[1][1] == '◻') {
                 tableroParaCambiar[1][1] = '❌'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇫') {
             if (tableroParaCambiar[1][2] == '◻') {
                 tableroParaCambiar[1][2] = '❌'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇬') {
             if (tableroParaCambiar[2][0] == '◻') {
                 tableroParaCambiar[2][0] = '❌'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇭') {
             if (tableroParaCambiar[2][1] == '◻') {
                 tableroParaCambiar[2][1] = '❌'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇮') {
             if (tableroParaCambiar[2][2] == '◻') {
                 tableroParaCambiar[2][2] = '❌'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🔄') {
+            arrayTTT[pos2].tablero = 'Jugador ❌ ha reiniciado';
             return 'Jugador ❌ ha reiniciado'
         }
     }
-    if (XorO == '⭕') {
+    if (turnoEmoji == '⭕') {
         if (emoji == '🇦') {
             if (tableroParaCambiar[0][0] == '◻') {
                 tableroParaCambiar[0][0] = '⭕'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇧') {
             if (tableroParaCambiar[0][1] == '◻') {
                 tableroParaCambiar[0][1] = '⭕'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇨') {
             if (tableroParaCambiar[0][2] == '◻') {
                 tableroParaCambiar[0][2] = '⭕'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇩') {
             if (tableroParaCambiar[1][0] == '◻') {
                 tableroParaCambiar[1][0] = '⭕'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇪') {
             if (tableroParaCambiar[1][1] == '◻') {
                 tableroParaCambiar[1][1] = '⭕'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇫') {
             if (tableroParaCambiar[1][2] == '◻') {
                 tableroParaCambiar[1][2] = '⭕'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇬') {
             if (tableroParaCambiar[2][0] == '◻') {
                 tableroParaCambiar[2][0] = '⭕'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇭') {
             if (tableroParaCambiar[2][1] == '◻') {
                 tableroParaCambiar[2][1] = '⭕'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🇮') {
             if (tableroParaCambiar[2][2] == '◻') {
                 tableroParaCambiar[2][2] = '⭕'
+                arrayTTT[pos2].cambioTurno()
             }
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
             return tableroConLetras(tableroParaCambiar)
         }
         if (emoji == '🔄') {
+            arrayTTT[pos2].tablero = 'Jugador ⭕ ha reiniciado';
             return 'Jugador ⭕ ha reiniciado'
         }
     }
 };
 
-//console.log(cambiarTablero('🇭', '⭕', '◻a◻b◻c\n◻d◻e◻f\n◻g◻h◻i'))
+
+
+function checkWinner(tablero, posicion) {
+    //Comprobar ❌
+    if (JSON.stringify(tablero[0]) == JSON.stringify(['❌', '❌', '❌']) || JSON.stringify(tablero[1]) == JSON.stringify(['❌', '❌', '❌']) || JSON.stringify(tablero[2]) == JSON.stringify(['❌', '❌', '❌'])) {
+        return 'ganador ❌'
+    }
+    if (tablero[0][0] == '❌' && tablero[1][0] == '❌' && tablero[2][0] == '❌') {
+        return 'ganador ❌'
+    }
+    if (tablero[0][1] == '❌' && tablero[1][1] == '❌' && tablero[2][1] == '❌') {
+        return 'ganador ❌'
+    }
+    if (tablero[0][2] == '❌' && tablero[1][2] == '❌' && tablero[2][2] == '❌') {
+        return 'ganador ❌'
+    }
+    if (tablero[0][0] == '❌' && tablero[1][1] == '❌' && tablero[2][2] == '❌') {
+        return 'ganador ❌'
+    }
+    if (tablero[0][2] == '❌' && tablero[1][1] == '❌' && tablero[2][0] == '❌') {
+        return 'ganador ❌'
+    }
+    //Comprobar ⭕
+    if (JSON.stringify(tablero[0]) == JSON.stringify(['⭕', '⭕', '⭕']) || JSON.stringify(tablero[1]) == JSON.stringify(['⭕', '⭕', '⭕']) || JSON.stringify(tablero[2]) == JSON.stringify(['⭕', '⭕', '⭕'])) {
+        return 'ganador ⭕'
+    }
+    if (tablero[0][0] == '⭕' && tablero[1][0] == '⭕' && tablero[2][0] == '⭕') {
+        return 'ganador ⭕'
+    }
+    if (tablero[0][1] == '⭕' && tablero[1][1] == '⭕' && tablero[2][1] == '⭕') {
+        return 'ganador ⭕'
+    }
+    if (tablero[0][2] == '⭕' && tablero[1][2] == '⭕' && tablero[2][2] == '⭕') {
+        return 'ganador ⭕'
+    }
+    if (tablero[0][0] == '⭕' && tablero[1][1] == '⭕' && tablero[2][2] == '⭕') {
+        return 'ganador ⭕'
+    }
+    if (tablero[0][2] == '⭕' && tablero[1][1] == '⭕' && tablero[2][0] == '⭕') {
+        return 'ganador ⭕'
+    }
+    //Comprobar si quedan jugadas
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            if (tablero[i][j] == '◻') {
+                return
+            }
+        }
+    }
+    //Empate
+    return 'empate'
+};
 
 
 
-/*
+class juegoTTT {
+    constructor(usuario1, usuario1ID, msgChannelSend) {
+        this.usuario1 = usuario1;
+        this.usuario1ID = usuario1ID;
+        this.usuario1emoji = '❌';
+        this.usuario2 = '';//usuario2;
+        this.usuario2ID = '';//usuario2;
+        this.usuario2emoji = '⭕';
+        this.msgTablero = '';//msgTablero;
+        this.turno = usuario1ID;//turno;
+        this.turnoEmoji = '❌';
+        this.tablero = [['◻', '◻', '◻'], ['◻', '◻', '◻'], ['◻', '◻', '◻']];
+        this.msgChannelSend = msgChannelSend;
+        this.msgChannelEdit = '';
+        this.isActive = false;
+    }
+    user2(usuario2, usuario2ID) {
+        this.usuario2 = usuario2;
+        this.usuario2ID = usuario2ID;
+    }
+    cambioTurno() {
+        if (this.turnoEmoji == '❌') {
+            this.turno = this.usuario2ID;
+            this.turnoEmoji = '⭕';
+        } else {
+            this.turno = this.usuario1ID;
+            this.turnoEmoji = '❌';
+        }
+    }
+    setMsgChannelEdit(msgChannelEdit) {
+        this.msgChannelEdit = msgChannelEdit;
+    }
+};
 
-1) Saber qué 2 jugadores
-2) decir cual es X y cual O
-3) enviar tablero con emojis
-4) esperar respuesta y comprobar el turno
-5) editar el mensaje para mostrar la jugada
-6) comprobar si hay un ganador
-7) Eliminar partida
 
-1) recibe .ttt
-2) devolver mensaje: el que envió .ttt es la ❌. Reacciona j2 con ⭕
-3) cuando recibe la respuesta: elimina el mensaje anterior
-4) envia el tablero en blanco y añade los 10 emotes (9 letras + reset)
-5) espera a una reacción. la procesa (comprueba si es jugada válida y si hay ganador) y edita 
-   el mensaje con el nuevo tablero
-6) cuando hay ganador, borra el mensaje del tablero y envía otro diciendo quién ha sido el ganador
 
-*/
-
-/*
-
-// Estructura
-on message == .ttt,
-    -.send(iniciarPartida(userID, msg_channel))
-
-iniciarPartida():
-    - nueva clase => this.userID ; UserID = X
-    - msg_channel.send('j1 = X; j2 reacciona con O; empieza X')
-    - .then(clase => this.messageID; UserID2 = O; turnoDe = UserID)
-
-- .onreaction (if emoji = 'O' && messageID = clase.messageID)
-    - => this.userID2 = userID
-    -.then( borrar mensaje)
-    -.then(.send(tablero)) ///
-    -.then(clase => partidaActiva, messageID)
-
--.onreaction (if userID == clase.userID or ID2 && partidaActiva && messageId == esUnaPartida)
-    - => tablero(emoji, message_channel)
-
-*/
+module.exports = { ticTacToe, tttEmojis, arrayTTT };
