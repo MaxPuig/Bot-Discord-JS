@@ -1,16 +1,8 @@
 require('dotenv').config();
-const Discord = require('discord.js');
-const client = new Discord.Client();
-
-
-client.on('ready', function () {
-    console.log('Bot ready');
-});
 
 
 
-client.on('message', async function (msg) {
-    //console.log(msg.content)
+async function borrarMsg(msg){
     if (msg.content.startsWith('!play ') || msg.content.startsWith('-play ')) {
         msg.suppressEmbeds();
     };
@@ -26,8 +18,8 @@ client.on('message', async function (msg) {
             }
         }, 120000);
     }
-});
+};
 
 
 
-client.login(process.env.TOKENPY);
+module.exports = { borrarMsg };
