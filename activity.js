@@ -1,18 +1,5 @@
 require('dotenv').config();
-const Discord = require('discord.js');
-const client = new Discord.Client();
 const fs = require('fs');
-
-
-
-client.on('ready', async function () {
-    console.log('Bot ready');
-    while (true) {
-        let guildID = process.env.GUILD_ID_SH;
-        await sleep(60000); // cada minuto
-        guardarInfo(client.guilds.cache.get(guildID).members.cache);
-    }
-});
 
 
 
@@ -73,4 +60,4 @@ function editNames(userID, displayName, nombresJSON) {
 
 
 
-client.login(process.env.TOKEN);
+module.exports = { guardarInfo, sleep };
