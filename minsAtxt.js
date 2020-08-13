@@ -1,6 +1,5 @@
 
 function minsAtxt(minutos) {
-    // Añadirá un espacio delante del tiempo. ' 1 día 4 horas'
     let mins = 0;
     let horas = 0;
     let dias = 0;
@@ -35,5 +34,10 @@ function minsAtxt(minutos) {
     } else if (dias != 0 || horas != 0 && mins == 0) {
         tiempo += ' ' + mins.toString() + ' minutos'
     }
+    tiempo = tiempo.substr(1);
     return tiempo;
-}
+};
+
+
+
+module.exports = { minsAtxt };
