@@ -21,7 +21,7 @@ function stringTiempos(userID) {
         total += value;
         mensaje += '**' + key + '** : ' + mat.minsAtxt(value) + '\n';
     }
-    mensaje += '**TOTAL** : ' + mat.minsAtxt(total)
+    mensaje += '> **TOTAL** : ' + mat.minsAtxt(total)
     return mensaje;
 };
 
