@@ -10,11 +10,13 @@
   "author": "mecs",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/opus": "^0.3.2",
     "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
     "d3": "^5.16.0",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
+    "ffmpeg-static": "^4.2.7",
     "iconv-lite": "^0.6.2"
   }
 }
