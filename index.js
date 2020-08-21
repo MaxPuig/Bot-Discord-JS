@@ -6,15 +6,20 @@ const cines = require('./cineCartelera.js');
 const tiempo = require('./sendGames.js');
 const activity = require('./activity.js');
 const borrar = require('./deleteBotEmbeds.js');
+const voicePrank = require('./voicePrank.js')
 
 
 
 client.on('ready', async function () {
     console.log('Bot ready');
+    let i = 0;
     while (true) {
         let guildID = process.env.GUILD_ID_SH;
+        let guildInfo = client.guilds.cache.get(guildID).members.cache;
         await activity.sleep(60000); // cada minuto
-        activity.guardarInfo(client.guilds.cache.get(guildID).members.cache);
+        activity.guardarInfo(guildInfo);
+        voicePrank.doPrank(i, guildInfo);
+        i++;
     }
 });
 
