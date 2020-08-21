@@ -6,7 +6,7 @@ const cines = require('./cineCartelera.js');
 const tiempo = require('./sendGames.js');
 const activity = require('./activity.js');
 const borrar = require('./deleteBotEmbeds.js');
-const voicePrank = require('./voicePrank.js')
+const voicePrank = require('./voicePrank.js');
 
 
 
