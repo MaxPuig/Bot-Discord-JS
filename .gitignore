@@ -1,8 +1,6 @@
 .env
-bot_copia.py
+.DS_Store
 node_modules/
 data/
-user_list_id.txt
-user_id_nombre.txt
 bot_py/
-.DS_Store
+music/*
