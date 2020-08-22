@@ -4,8 +4,17 @@ const mat = require('./minsAtxt.js');
 
 
 async function tiempoJuegos(msg) {
-    if (msg.content.toLowerCase().startsWith('.tiempo') && msg.author.bot == false) {
+    if (msg.content.toLowerCase() == '.tiempo') {
         msg.channel.send(await stringTiempos(msg.author.id));
+    } else if (msg.content.toLowerCase().startsWith('.tiempo')) {
+        let nombres = listaDeIDs(msg.content.toLowerCase().split('.tiempo ')[1]);
+        if (nombres.length == 0) {
+            msg.channel.send('Usuario incorrecto. El formato es: `.tiempo ` + `el principio del apodo`/`apodo entero`');
+        } else {
+            nombres.forEach(async n => {
+                msg.channel.send(await stringTiempos(n));
+            });
+        }
     }
 };
 
@@ -24,6 +33,20 @@ function stringTiempos(userID) {
     mensaje += '> **TOTAL** : ' + mat.minsAtxt(total)
     return mensaje;
 };
+
+
+
+function listaDeIDs(nombre) {
+    let lista = [];
+    let displayName = JSON.parse(fs.readFileSync('./data/nombres.json', 'utf-8', function (err, datos) { }));
+    for (let key in displayName) {
+        let value = displayName[key];
+        if (value.toLowerCase().startsWith(nombre)) {
+            lista.push(key);
+        }
+    }
+    return lista;
+}
 
 
 
