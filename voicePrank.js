@@ -6,9 +6,11 @@ function doPrank(numero, guildInfo) {
     if (numero % 15 != 0) { //cada 15 mins
         return;
     }
+    let j = 0;
     guildInfo.forEach(n => {
-        if (n.voice.channel != null) {
+        if (n.voice.channel != null && j == 0) {
             playAudio(n.voice.channel);
+            j++;
             return;
         }
     })
@@ -29,7 +31,7 @@ function playAudio(n_voice_channel) {
             }
         }
         let dispatcher = connection.play('./music/' + audio);
-        dispatcher.on('start', () => {});
+        dispatcher.on('start', () => { });
         dispatcher.on('error', console.error);
         dispatcher.on('finish', () => {
             voiceChannel.leave();
