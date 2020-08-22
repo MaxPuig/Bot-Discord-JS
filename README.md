@@ -59,5 +59,5 @@ Listo!!! Ejecuta el bot con ```node index.js```
 ## ERRORES
 - En caso de ```Error: EACCES: permission denied, open './data/juegos.json'``` salir del bot con ```ctrl + c```, y ecribir, con el path correcto, ```sudo chmod -R 777 /home/ubuntu/Bot-Discord-JS```
 - Posible error: no tener archivos de audio en la carpeta "./music". Solución: meter un archivo mp3 en la carpeta o quitar la funcionalidad (explicado arriba)
-- iconv-lite pide actualización. Solución: ignorar o quitar la funcionalidad (explicado arriba)
+- iconv-lite pide actualización. Razón: escribir ```.cine```. Solución: ignorar o quitar la funcionalidad (explicado arriba)
 - Errores con el ```.cine```. Solución: quitar la funcionalidad (explicado arriba) o editar el archivo "cineCartelera.js" a tu gusto
