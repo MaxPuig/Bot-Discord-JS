@@ -1,15 +1,18 @@
 # Bot Discord
 Bot para Discord escrito en node.js
-- Guarda el tiempo jugado a cada juego de todos los usuarios (el usuario tiene que tener visible el juego en Discord)
+- Guarda el tiempo jugado a cada juego de todos los usuarios (el usuario tiene que tener visible el juego en Discord) y lo envía
 - Reproduce audios (.mp3) aleatorios cada 15 minutos si hay alguien en un canal de voz
 - Elimina previsualizaciones de links cuando van dirigidas a un bot de música
 - Elimina los mensajes de los bots de música (Rythm y Groovy) después de 2 minutos
+- Reproduce una película ASCII de WWW.ASCIIMATION.CO.NZ a 1 frame cada 1350ms
 
 ## COMANDOS
 - .ttt    > Empieza una partida del 3 en raya
 - .cine   > Envía la cartelera del día de hoy
 - .tiempo > Envía la lista de juegos y el tiempo jugado
+- .tiempo + ```principio de otro apodo``` > Envía la lista de juegos y el tiempo jugado de esa persona
 - .backup > Envía los archivos "juegos.json" y "nombres.json"
+- .peli   > Reproduce la película en un mensaje
 
 ## SETUP
 - SSH al servidor que vas a usar
