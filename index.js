@@ -7,6 +7,7 @@ const tiempo = require('./sendGames.js');
 const activity = require('./activity.js');
 const borrar = require('./deleteBotEmbeds.js');
 const voicePrank = require('./voicePrank.js');
+const peli = require('./film.js');
 
 
 
@@ -25,10 +26,19 @@ client.on('ready', async function () {
 
 
 
+client.on('rateLimit', async function (rateLimitInfo) {
+    peli.ratelimit(rateLimitInfo);
+});
+
+
+
 client.on('message', async function (msg) {
-    cines.cines(msg);
-    ttt.ticTacToe(msg);
-    tiempo.tiempoJuegos(msg);
+    if(msg.content.startsWith('.')){
+        cines.cines(msg);
+        ttt.ticTacToe(msg);
+        tiempo.tiempoJuegos(msg);
+        peli.enviarPeli(msg);
+    };
     borrar.borrarMsg(msg);
     if (msg.content == '.backup') {
         msg.channel.send({ files: ["./data/nombres.json", "./data/juegos.json"] })
