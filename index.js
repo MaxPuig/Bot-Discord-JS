@@ -8,6 +8,7 @@ const activity = require('./activity.js');
 const borrar = require('./deleteBotEmbeds.js');
 const voicePrank = require('./voicePrank.js');
 const peli = require('./film.js');
+const amongUs = require('./amongUs.js')
 
 
 
@@ -38,6 +39,7 @@ client.on('message', async function (msg) {
         ttt.ticTacToe(msg);
         tiempo.tiempoJuegos(msg);
         peli.enviarPeli(msg);
+        amongUs.amongUs(msg)
     };
     borrar.borrarMsg(msg);
     if (msg.content == '.backup') {
@@ -49,6 +51,7 @@ client.on('message', async function (msg) {
 
 client.on('messageReactionAdd', async (reaction, user) => {
     ttt.tttEmojis(reaction, user);
+    amongUs.amongUsEmoji(reaction, user)
 });
 
 
