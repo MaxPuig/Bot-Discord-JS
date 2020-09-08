@@ -3,7 +3,7 @@ const fs = require('fs');
 
 
 function doPrank(numero, guildInfo) {
-    if (numero % 15 != 0) { //cada 15 mins
+    if (numero % 30 != 0) { //cada 30 mins
         return;
     }
     let j = 0;
