@@ -10,11 +10,8 @@ function sleep(ms) {
 };
 
 
-
+//'.peli' Envía la película editando un mensaje o lo para con '.stop'
 async function enviarPeli(msg) {
-    if (msg.content.toLowerCase() == '.stop') {
-        play = false;
-    };
     if (msg.content == '.peli') {
         play = false;
         msg.channel.send('Película de Star wars\nsi se ve mal, ctrl + "-"')
@@ -23,6 +20,9 @@ async function enviarPeli(msg) {
                 play = true;
                 processLineByLine(n);
             })
+    };
+    if (msg.content.toLowerCase() == '.stop') {
+        play = false;
     };
 };
 
@@ -40,8 +40,8 @@ async function processLineByLine(msg) {
             await sleep(1350)
             await sleep(espera)
             espera = 0;
-            msg.edit('```️\n' + frame + '️```\n.stop para pararlo')
-            if (play == false) {
+            msg.edit('```️\n' + frame + '️```\n```.stop para pararlo```')
+            if (play == false) { //Comprueba si seguir
                 return
             }
             frame = '';
@@ -52,6 +52,7 @@ async function processLineByLine(msg) {
 };
 
 
+//Si supera el ratelimit, pone el bot en pausa por 5 segundos (se ejecuta desde index.js)
 function ratelimit(rateMessage) {
     if (rateMessage.timeout != 0) {
         espera = 5000;
