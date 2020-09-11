@@ -2,7 +2,7 @@ const fs = require('fs');
 let titulo = '**Lista de jugadores:**\n(Pulsa el emoji para unirte)\n';
 
 
-
+//Si recibe '.among us' envia un mensaje con un emoji
 function amongUs(msg) {
     if (msg.content.toLowerCase().startsWith('.among us')) {
         msg.channel.send(titulo).then(function (msg) {
@@ -14,7 +14,7 @@ function amongUs(msg) {
 };
 
 
-
+//Al pulsarel emoji comprueba que sea el mensaje correcto y te añade a la lista (edita el mensaje)
 function amongUsEmoji(reaction, user) {
     if (user.bot == false && reaction._emoji.name == '⭕' && reaction.message.content.startsWith('**Lista de jugadores:**\n(Pulsa el emoji para unirte)')) {
         let jugadores = JSON.parse(fs.readFileSync('./data/amongUsJugadores.json', 'utf-8'));
@@ -28,7 +28,7 @@ function amongUsEmoji(reaction, user) {
 };
 
 
-
+//Crea el mensaje con la lista de nombres (Apodos/DisplayName)
 function nombres(players) {
     let nombres = JSON.parse(fs.readFileSync('./data/nombres.json', 'utf-8'));
     let listaPlayers = titulo;

@@ -4,7 +4,7 @@ const letters = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭',
 
 
 
-// client.on('message', async function (msg) ...
+//Al recibir '.ttt' envia un mensaje para que se una un 2o jugador a la partida de 3 en raya
 function ticTacToe(msg) {
     if (msg.content == '.ttt') {
         let userDisplayName = msg.member.displayName;
@@ -22,14 +22,16 @@ function ticTacToe(msg) {
 
 
 
-// client.on('messageReactionAdd', async (reaction, user) ...
+//Comprueba que sea un jugador válido y lo une a la partida
 function tttEmojis(reaction, user) {
+    //jugador que está en partida activa
     if (user.bot == false && reaction.message.content.slice(-1) == '⭕' && reaction._emoji.name == '⭕' && isUserInArray(user.id)) {
         let pos3 = posUserInArray(user.id);
         if (arrayTTT[pos3].isActive == true) {
             arrayTTT.splice(pos3, 1); //lo borra de una partida activa
         }
     }
+    //jugador que no está en partida
     if (user.bot == false && reaction.message.content.slice(-1) == '⭕' && reaction._emoji.name == '⭕' && !isUserInArray(user.id)) {
         let pos = posInArray(reaction.message.channel);
         arrayTTT[pos].isActive = true;
@@ -41,6 +43,7 @@ function tttEmojis(reaction, user) {
                     addEmojis(msg)
                 }))
     }
+    //Jugador quiere hacer una jugada
     if (user.bot == false && letters.indexOf(reaction._emoji.name) >= 0 && isMsgInArray(reaction.message, user.id)) {
         let pos2 = posInArray(reaction.message);
         if (arrayTTT[pos2].turno == user.id) {
@@ -60,19 +63,19 @@ function tttEmojis(reaction, user) {
 };
 
 
-
+//Comprueba si es el mensaje correcto
 function isMsgInArray(checkMsg, checkUserID) {
     for (let p = 0; p < arrayTTT.length; p++) {
         let instancia = arrayTTT[p];
         if (instancia.msgChannelEdit == checkMsg && (instancia.usuario1ID == checkUserID || instancia.usuario2ID == checkUserID)) {
-            return true
-        }
-    }
-    return false
+            return true;
+        };
+    };
+    return false;
 };
 
 
-
+//Comprueba si el jugador está en alguna partida
 function isUserInArray(checkInfo) {
     for (let p = 0; p < arrayTTT.length; p++) {
         let instancia = arrayTTT[p];
@@ -84,7 +87,7 @@ function isUserInArray(checkInfo) {
 };
 
 
-
+//Encuentra la posición del usuario en el array donde estan todas las partidas (arrayTTT)
 function posUserInArray(userID) {
     for (let p = 0; p < arrayTTT.length; p++) {
         let instancia = arrayTTT[p];
@@ -96,7 +99,7 @@ function posUserInArray(userID) {
 };
 
 
-
+//Encuentra la posición del mensaje en el array donde estan todas las partidas (arrayTTT)
 function posInArray(msgEditOrSend) {
     for (let p = 0; p < arrayTTT.length; p++) {
         let instancia = arrayTTT[p];
@@ -108,7 +111,7 @@ function posInArray(msgEditOrSend) {
 };
 
 
-
+//Recibe el tablero en forma de array y lo devuelve como texto
 function tableroConLetras(tablero) { // [[emojis],[emojis],[emojis]]
     let letrasABC = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'];
     let tableroParaEnviar = '';
@@ -124,19 +127,19 @@ function tableroConLetras(tablero) { // [[emojis],[emojis],[emojis]]
 };
 
 
-
+//Recibe el tablero en forma de string y lo devuelve como array
 function tableroStrToArray(message_content) {
     let tableroArray = [[], [], []];
     let tableroString = '';
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < 9; i++) { //Cuando hay salto de línea
         if (message_content.charAt(0) == '\n') {
             message_content = message_content.substring(1)
         }
-        tableroString = tableroString + message_content.charAt(0)
-        message_content = message_content.substring(1)
-        message_content = message_content.substring(1)
+        tableroString = tableroString + message_content.charAt(0) //guarda los emojis
+        message_content = message_content.substring(1) //elimina el emoji
+        message_content = message_content.substring(1) //elimina la letra
     }
-    for (let j = 0; j < 3; j++) {
+    for (let j = 0; j < 3; j++) { //crea el array
         for (let k = 0; k < 3; k++) {
             tableroArray[j][k] = tableroString.charAt(0)
             tableroString = tableroString.substring(1)
@@ -146,13 +149,13 @@ function tableroStrToArray(message_content) {
 };
 
 
-
+//guarda el tablero en formato array
 function guardarTablero(tableroSTR, pos2) {
     arrayTTT[pos2].tablero = tableroStrToArray(tableroSTR);
 };
 
 
-
+//Añade los emojis A-I y Restart
 function addEmojis(msg_channel) {
     for (let i = 0; i < 10; i++) {
         msg_channel.react(letters[i])
@@ -160,7 +163,7 @@ function addEmojis(msg_channel) {
 };
 
 
-
+//Edita el tablero
 function cambiarTablero(emoji, turnoEmoji, message_tablero, pos2) {
     let tableroParaCambiar = tableroStrToArray(message_tablero);
     if (turnoEmoji == '❌') {
@@ -169,8 +172,8 @@ function cambiarTablero(emoji, turnoEmoji, message_tablero, pos2) {
                 tableroParaCambiar[0][0] = '❌'
                 arrayTTT[pos2].cambioTurno()
             }
-            guardarTablero(tableroConLetras(tableroParaCambiar), pos2);
-            return tableroConLetras(tableroParaCambiar)
+            guardarTablero(tableroConLetras(tableroParaCambiar), pos2); //Posiblemente no haría falta (array -> texto -> array)
+            return tableroConLetras(tableroParaCambiar)                 //^Tendría que ver si funciona al reiniciar/ganador/empate
         }
         if (emoji == '🇧') {
             if (tableroParaCambiar[0][1] == '◻') {
@@ -322,7 +325,7 @@ function cambiarTablero(emoji, turnoEmoji, message_tablero, pos2) {
 };
 
 
-
+//Función para comprobar si hay un ganador o posibles jugadas
 function checkWinner(tablero, posicion) {
     //Comprobar ❌
     if (JSON.stringify(tablero[0]) == JSON.stringify(['❌', '❌', '❌']) || JSON.stringify(tablero[1]) == JSON.stringify(['❌', '❌', '❌']) || JSON.stringify(tablero[2]) == JSON.stringify(['❌', '❌', '❌'])) {

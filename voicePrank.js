@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 
-
+//Reproduce un audio aleatorio de './music' si hay alguien conectado a un voice channel
 function doPrank(numero, guildInfo) {
     if (numero % 30 != 0) { //cada 30 mins
         return;

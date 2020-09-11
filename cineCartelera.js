@@ -5,15 +5,15 @@ require('dotenv').config();
 
 
 
-// client.on('message', async function (msg) ...
+//Si recibe '.cine' envia un mensaje con la lista de películas para el día seleccionado (default el mismo dia)
 async function cines(msg) {
-    if (msg.content.toLowerCase().startsWith('.cine') && msg.author.bot == false) {
+    if (msg.content.toLowerCase().startsWith('.cine')) {
         msg.channel.send(await infoCineIndex(msg.content.toLowerCase()));
     }
 };
 
 
-
+//Crea el mensaje. Primero decide de qué día es la cartelera y si tiene que enviar la sinopsis
 async function infoCineIndex(param) {
     if (param.split(' ').length == 1) {
         let mensaje = await cinesInfo(process.env.CINEC_HOY, 'HOY') + '\n \n' +
@@ -50,7 +50,7 @@ async function infoCineIndex(param) {
 };
 
 
-
+//Accede a la web y enumera los resultados de películas
 async function cinesInfo(pagina, dia) {
     let listaTitulos = '**Peliculas de ' + dia + ' en Cines Rotonda**';
     let j = 0;
@@ -77,7 +77,7 @@ async function cinesInfo(pagina, dia) {
 };
 
 
-
+//Accede a la sinopsis de la web
 async function sinopsis(pagina, num) {
     let descripcion = '**SINOPSIS**\n';
     let texto = [];

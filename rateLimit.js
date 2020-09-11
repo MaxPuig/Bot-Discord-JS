@@ -7,6 +7,10 @@ let tiempo = 500; //tiempo entre los primeros 5 mensajes
 let retraso2 = 0; // tiempo entre mensajes después de los 5 mensajes
 
 
+//Bot independiente para descubrir el ratelimit
+//Hace un console.log() del tiempo entre mensajes para que sea fluido
+//Se inicia enviando 'a' en el chat de discord
+
 
 client.on('ready', async function () {
     console.log('Bot ready');

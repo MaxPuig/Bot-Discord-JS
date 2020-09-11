@@ -1,4 +1,4 @@
-
+//Pasa de un número (minutos) a formato dias/horas/minutos
 function minsAtxt(minutos) {
     let mins = 0;
     let horas = 0;
