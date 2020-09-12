@@ -30,7 +30,7 @@ sudo npm install -g n
 sudo n stable
 ```
 - Descargar los archivos del bot ```git clone https://github.com/MaxPuig/Bot-Discord-JS.git```
-- Descargar los paquetes```git install```
+- Descargar los paquetes```npm install```
 - Crear el archivo .env ```sudo nano .env``` y ahí escribir con los propios datos:
 (Seguramente no vayas a utilizar .cine porque no usaremos la misma página web. De momento deja los "CINEC" como están. En **QUITAR FUNCIONALIDADES** explico cómo quitar el .cine)
 ```
