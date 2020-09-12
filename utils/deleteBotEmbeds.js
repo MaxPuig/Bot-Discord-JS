@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({path: '../.env'});
 
 
 //Elimina la preview de los links que van dirigidos a los bots de música y sus mensajes

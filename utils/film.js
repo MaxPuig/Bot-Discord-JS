@@ -29,7 +29,7 @@ async function enviarPeli(msg) {
 
 
 async function processLineByLine(msg) {
-    const fileStream = fs.createReadStream('sw1.txt');
+    const fileStream = fs.createReadStream('../extra/sw1.txt');
     let frame = '';
     const rl = readline.createInterface({
         input: fileStream,

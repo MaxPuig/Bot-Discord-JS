@@ -1,7 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const iconv = require('iconv-lite');
-require('dotenv').config();
+require('dotenv').config({path: '../.env'});
 
 
 

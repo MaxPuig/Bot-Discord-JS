@@ -1,14 +1,14 @@
 require('dotenv').config();
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const ttt = require('./ticTacToe.js');
-const cines = require('./cineCartelera.js');
-const tiempo = require('./sendGames.js');
-const activity = require('./activity.js');
-const borrar = require('./deleteBotEmbeds.js');
-const voicePrank = require('./voicePrank.js');
-const peli = require('./film.js');
-const amongUs = require('./amongUs.js')
+const ttt = require('./utils/ticTacToe.js');
+const cines = require('./utils/cineCartelera.js');
+const tiempo = require('./utils/sendGames.js');
+const activity = require('./utils/activity.js');
+const borrar = require('./utils/deleteBotEmbeds.js');
+const voicePrank = require('./utils/voicePrank.js');
+const peli = require('./utils/film.js');
+const amongUs = require('./utils/amongUs.js')
 
 
 
