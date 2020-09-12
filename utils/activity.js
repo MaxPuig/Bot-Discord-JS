@@ -11,8 +11,8 @@ function sleep(ms) {
 //Guarda el tiempo jugado a cada juego en ../data/juegos.json cada minuto
 //Guarda el ID junto con el apodo/displayname en ../data/nombres.json
 async function guardarInfo(guildMembersCache) {
-    let juegos = JSON.parse(fs.readFileSync('../data/juegos.json', 'utf-8'));
-    let nombres = JSON.parse(fs.readFileSync('../data/nombres.json', 'utf-8'));
+    let juegos = JSON.parse(fs.readFileSync('./data/juegos.json', 'utf-8'));
+    let nombres = JSON.parse(fs.readFileSync('./data/nombres.json', 'utf-8'));
     guildMembersCache.forEach(n => {
         if (!n.user.bot) {  //cada usuario (no bot) que está online
             let usuarioID = n.user.id;
@@ -29,8 +29,8 @@ async function guardarInfo(guildMembersCache) {
             }
         }
     });
-    fs.writeFileSync('../data/juegos.json', JSON.stringify(juegos));
-    fs.writeFileSync('../data/nombres.json', JSON.stringify(nombres));
+    fs.writeFileSync('./data/juegos.json', JSON.stringify(juegos));
+    fs.writeFileSync('./data/nombres.json', JSON.stringify(nombres));
 };
 
 
