@@ -1,6 +1,7 @@
 .env
 .DS_Store
 node_modules/
-data/
+data/*
 bot_py/
 music/*
+notReady/
