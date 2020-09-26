@@ -11,6 +11,7 @@ const peli = require('./utils/film.js');
 const amongUs = require('./utils/amongUs.js');
 const rss = require('./utils/rss.js');
 const fs = require('fs');
+const c4 = require('./utils/conecta4.js')
 
 
 
@@ -50,6 +51,7 @@ client.on('message', async function (msg) {
         peli.enviarPeli(msg);
         amongUs.amongUs(msg);
         rss.setRSSchannel(msg);
+        c4.conecta4msg(msg);
     };
     borrar.borrarMsg(msg);
     if (msg.content == '.backup') {
@@ -61,7 +63,8 @@ client.on('message', async function (msg) {
 
 client.on('messageReactionAdd', async (reaction, user) => {
     ttt.tttEmojis(reaction, user);
-    amongUs.amongUsEmoji(reaction, user)
+    amongUs.amongUsEmoji(reaction, user);
+    c4.c4Emojis(reaction, user);
 });
 
 
