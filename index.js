@@ -12,6 +12,7 @@ const amongUs = require('./utils/amongUs.js');
 const rss = require('./utils/rss.js');
 const fs = require('fs');
 const c4 = require('./utils/conecta4.js')
+const help = require('./utils/help.js')
 
 
 
@@ -52,6 +53,7 @@ client.on('message', async function (msg) {
         amongUs.amongUs(msg);
         rss.setRSSchannel(msg);
         c4.conecta4msg(msg);
+        help.sendHelp(msg);
     };
     borrar.borrarMsg(msg);
     if (msg.content == '.backup') {
