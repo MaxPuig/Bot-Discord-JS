@@ -16,10 +16,10 @@ function conecta4msg(msg) {
     if (msg.content == '.c4') {
         let userID = msg.member.id;
         let posicionInfo = isUserInArray(userID);
-        if (posicionInfo[0] == true) { //Si está en el array, lo borra
+        if (posicionInfo[0]) { //Si está en el array, lo borra
             arrayC4.splice(posicionInfo[1], 1);
         }
-        msg.channel.send('**CONECTA 4\n<@' + msg.member.id + '>** es 🟡 y empieza\n**Jugador 2**, reacciona al mensaje con 🔴')
+        msg.channel.send('**CONECTA 4\n<@' + msg.member.id + '>** es 🟡 y empieza.\n**Jugador 2**, reacciona al mensaje con 🔴')
             .then(function (men) {
                 arrayC4.push(new conecta4(userID, men.channel));
                 men.react('🔴');
@@ -130,10 +130,14 @@ function addFicha(tablero, emojiColumna, turno, pos2) { //return tablero
     for (let y5 = 5; y5 >= 0; y5--) {
         if (tablero[y5][emojiColumna] == '⚪') {
             tablero[y5][emojiColumna] = turno[0];
-            if (checkWinners(tablero, pos2)) {
-                arrayC4[pos2].msg_turno.edit('Ha ganado <@' + turno[1] + '>');
+            if (checkWinners(tablero, pos2)[0]) {
+                arrayC4[pos2].msg_turno.edit('Ha ganado <@' + turno[1] + '> 🎉🎉🎉');
                 arrayC4.splice(pos2, 1);
-            } else {
+            } else if (checkWinners(tablero, pos2)[1] == 'empate') { // empate
+                arrayC4[pos2].msg_turno.edit('Ha habido un empate 😩😩😩');
+                arrayC4.splice(pos2, 1);
+            }
+            else {
                 arrayC4[pos2].cambioTurno();
                 arrayC4[pos2].tablero = tablero;
             }
@@ -154,7 +158,7 @@ function checkWinners(tablero, pos2) {
             let ficha3 = tablero[y + 2][x + 2];
             let ficha4 = tablero[y + 3][x + 3];
             if (ficha1 == ficha2 && ficha2 == ficha3 && ficha3 == ficha4 && ficha1 != '⚪') {
-                return true;
+                return [true, undefined];
             }
         }
         for (let x2 = 0; x2 <= 3; x2++) { //derecha izquierda '/'
@@ -163,7 +167,7 @@ function checkWinners(tablero, pos2) {
             let ficha3 = tablero[y + 2][x2 + 1];
             let ficha4 = tablero[y + 3][x2];
             if (ficha1 == ficha2 && ficha2 == ficha3 && ficha3 == ficha4 && ficha1 != '⚪') {
-                return true;
+                return [true, undefined];
             }
         }
     }
@@ -175,7 +179,7 @@ function checkWinners(tablero, pos2) {
             let ficha3 = tablero[y3 + 2][x3];
             let ficha4 = tablero[y3 + 3][x3];
             if (ficha1 == ficha2 && ficha2 == ficha3 && ficha3 == ficha4 && ficha1 != '⚪') {
-                return true;
+                return [true, undefined];
             }
         }
     }
@@ -187,7 +191,7 @@ function checkWinners(tablero, pos2) {
             let ficha3 = tablero[y4][x4 + 2];
             let ficha4 = tablero[y4][x4 + 3];
             if (ficha1 == ficha2 && ficha2 == ficha3 && ficha3 == ficha4 && ficha1 != '⚪') {
-                return true;
+                return [true, undefined];
             }
         }
     }
@@ -195,14 +199,12 @@ function checkWinners(tablero, pos2) {
     for (let y6 = 0; y6 <= 5; y6++) {
         for (let x6 = 0; x6 <= 6; x6++) {
             if (tablero[y6][x6] == '⚪') {
-                return false;
+                return [false, undefined];
             }
         }
     }
     //empate
-    arrayC4[pos2].msg_turno.edit('Ha ganado <@' + turno[1] + '>');
-    arrayC4.splice(pos2, 1);
-    return false;
+    return [false, 'empate'];
 }
 
 
