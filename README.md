@@ -5,14 +5,18 @@ Bot para Discord escrito en node.js
 - Elimina previsualizaciones de links cuando van dirigidas a un bot de música
 - Elimina los mensajes de los bots de música (Rythm y Groovy) después de 2 minutos
 - Reproduce una película ASCII de WWW.ASCIIMATION.CO.NZ a 1 frame cada 1350ms
+- Envía ofertas de juegos gratis
+- Juegos entre 2 perosonas. 3 en raya y conecta 4
 
 ## COMANDOS
 - .ttt    > Empieza una partida del 3 en raya
+- .c4     > Empieza una partida del conecta 4
 - .cine   > Envía la cartelera del día de hoy
 - .tiempo > Envía la lista de juegos y el tiempo jugado
 - .tiempo + ```principio de otro apodo``` > Envía la lista de juegos y el tiempo jugado de esa persona
 - .backup > Envía los archivos "juegos.json" y "nombres.json"
 - .peli   > Reproduce la película en un mensaje
+- .rss    > Establece el lugar donde debe enviar las ofertas de juegos
 
 ## SETUP
 - SSH al servidor que vas a usar
@@ -50,7 +54,7 @@ CINEC_PM="Link de la cartelera de pasado mañana"
 Listo!!! Ejecuta el bot con ```node index.js```
 - Para parar el bot ```ctrl + c```
 
-## QUITAR FUNCIONALIDADES
+## QUITAR FUNCIONALIDADES (No funciona, el código ha sido reorganizado)
 - Editar index.js ```sudo nano index.js```
 - Para quitar **cine**: eliminar líneas 5, 29: ```const cines = require('./cineCartelera.js');```, ```cines.cines(msg);```
 - Para quitar **audios**: eliminar líneas 9, 15, 21, 22: ```const voicePrank = require('./voicePrank.js');```, ```let i = 0;```, ```voicePrank.doPrank(i, guildInfo);```, ```i++;```
