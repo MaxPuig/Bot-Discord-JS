@@ -51,8 +51,9 @@ async function freeFames() {
             link = link[0];
             if (link.startsWith('https://steamcommunity.com/linkfilter/?url=')) {
                 link = link.split('https://steamcommunity.com/linkfilter/?url=')[1];
-            } else if ( link.startsWith('https://store.epicgames.com/GRABFREEGAMES')){
-                link = link.replace('/GRABFREEGAMES/', '/store/');
+            }
+            if (link.startsWith('https://store.epicgames.com/GRABFREEGAMES')) {
+                link = link.replace('epicgames.com/GRABFREEGAMES/', 'epicgames.com/store/');
             }
             mensaje += item.title + '\n' + link + '\n\n';
         }
