@@ -5,3 +5,5 @@ data/*
 bot_py/
 music/*
 notReady/*
+package-lock.json
+audioNombres/*
