@@ -16,7 +16,7 @@ async function descargar_audio(displayName, userID) {
     const [response] = await client.synthesizeSpeech(request);
     const writeFile = util.promisify(fs.writeFile);
     await writeFile('./audioNombres/' + userID + '.mp3', response.audioContent, 'binary');
-    console.log('Audio content written to file: ' + userID + '.mp3');
+    console.log(displayName + ' Audio content written to file: ' + userID + '.mp3');
 
     let datos = JSON.parse(fs.readFileSync('./data/nombresAudio.json', 'utf-8'));
     datos[userID] = [displayName, Math.floor(Date.now() / 1000)];
@@ -59,6 +59,9 @@ async function playAudio(new_Member) {
         await descargar_audio(currentDisplayName, userID);
     }
     if (currentTime - lastTime > 9) { // Si han pasado más de 10 secs de la última vez que se ha reproducido
+        let datos = JSON.parse(fs.readFileSync('./data/nombresAudio.json', 'utf-8'));
+        datos[userID][1] = Math.floor(Date.now() / 1000)
+        fs.writeFileSync('./data/nombresAudio.json', JSON.stringify(datos));
         voiceChannel.join().then(connection => {
             let dispatcher = connection.play('./audioNombres/' + userID + '.mp3');
             dispatcher.on('start', () => { });
