@@ -13,6 +13,7 @@ const rss = require('./utils/rss.js');
 const fs = require('fs');
 const c4 = require('./utils/conecta4.js')
 const help = require('./utils/help.js')
+const ttsUser = require('./utils/voice.js')
 
 
 
@@ -67,6 +68,12 @@ client.on('messageReactionAdd', async (reaction, user) => {
     ttt.tttEmojis(reaction, user);
     amongUs.amongUsEmoji(reaction, user);
     c4.c4Emojis(reaction, user);
+});
+
+
+
+client.on("voiceStateUpdate", function (oldMember, newMember) {
+    ttsUser.userJoined(oldMember, newMember)
 });
 
 
