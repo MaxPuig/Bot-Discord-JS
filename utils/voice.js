@@ -16,7 +16,7 @@ async function descargar_audio(displayName, userID) {
     const [response] = await client.synthesizeSpeech(request);
     const writeFile = util.promisify(fs.writeFile);
     await writeFile('./audioNombres/' + userID + '.mp3', response.audioContent, 'binary');
-    //console.log('Audio content written to file: ' + userID + '.mp3');
+    console.log('Audio content written to file: ' + userID + '.mp3');
 
     let datos = JSON.parse(fs.readFileSync('./data/nombresAudio.json', 'utf-8'));
     datos[userID] = [displayName, Math.floor(Date.now() / 1000)];
@@ -28,7 +28,7 @@ async function descargar_audio(displayName, userID) {
 function userJoined(oldMember, newMember) {
     if (oldMember.channelID != newMember.channelID && (newMember.channelID != null || newMember.channelID != undefined) && !newMember.member.user.bot) {
         let usersInChannel = 0;
-        newMember.guild.members.cache.forEach(usuario => {
+        newMember.channel.members.forEach(usuario => {
             if (!usuario.user.bot) {
                 usersInChannel++;
             }
