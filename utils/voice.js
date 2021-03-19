@@ -7,7 +7,7 @@ const client = new textToSpeech.TextToSpeechClient({ projectId: 'tts-nodejs-disc
 
 // Descarga el audio desde Google
 async function descargar_audio(displayName, userID) {
-    const text = 'Se ha unido ' + displayName + ' a la llamada';
+    const text = 'Se ha unido ' + displayName;
     const request = {
         input: { text: text },
         voice: { languageCode: 'es-ES', name: 'es-ES-Wavenet-B' },
