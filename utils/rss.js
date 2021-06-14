@@ -10,7 +10,7 @@ async function sendRSS(tiempo, channel) {
         return;
     }
     try {
-        let oferta = await freeFames();
+        let oferta = await freeGames();
         if (oferta.length > 0) {
             channel.send(oferta);
         }
@@ -28,7 +28,7 @@ function setRSSchannel(msg) {
 
 
 //Crea un string con las nuevas ofertas
-async function freeFames() {
+async function freeGames() {
     let feed = await parser.parseURL('https://steamcommunity.com/groups/GrabFreeGames/rss/');
     let nombres;
     let link;
@@ -53,7 +53,7 @@ async function freeFames() {
                 link = link.split('https://steamcommunity.com/linkfilter/?url=')[1];
             }
             if (link.startsWith('https://store.epicgames.com/GRABFREEGAMES')) {
-                link = link.replace('epicgames.com/GRABFREEGAMES/', 'epicgames.com/store/');
+                link = link.replace('epicgames.com/GRABFREEGAMES/', 'epicgames.com/store/es-ES/p/');
             }
             mensaje += item.title + '\n' + link + '\n\n';
         }
