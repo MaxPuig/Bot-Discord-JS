@@ -6,7 +6,6 @@ const fs = require('fs');
 //Cada 15 mins, si hay una oferta nueva la envía
 async function sendRSS(tiempo, channel) {
     if (channel == undefined || tiempo % 15 != 0) { //cada 15 mins
-        //console.log('undefined channel')
         return;
     }
     try {
@@ -53,13 +52,12 @@ async function freeGames() {
                 link = link.split('https://steamcommunity.com/linkfilter/?url=')[1];
             }
             if (link.startsWith('https://store.epicgames.com/GRABFREEGAMES')) {
-                link = link.replace('epicgames.com/GRABFREEGAMES/', 'epicgames.com/store/es-ES/p/');
+                link = link.replace('store.epicgames.com/GRABFREEGAMES/', 'www.epicgames.com/store/es-ES/p/');
             }
             mensaje += item.title + '\n' + link + '\n\n';
         }
     });
     fs.writeFileSync('./data/freeGames.json', JSON.stringify(nombresNuevos));
-    //console.log(mensaje)
     return mensaje;
 };
 
